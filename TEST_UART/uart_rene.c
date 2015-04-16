@@ -1,4 +1,5 @@
 #include "uart_rene.h"
+#include<string.h>
 char _cR;
 int _max;
 char *mensaje;
@@ -30,30 +31,33 @@ char uart_getc(void){
 
 }
 void uart_printc(char _c){
-	mensaje=&_c;
+	mensaje=(char *) (malloc(sizeof(char)));
+	mensaje[0]=_c;
 	_max=1;
 	IE2|=UCA0TXIE;
+	mensaje=NULL;
+	free(mensaje);
+}
+void uart_prints(char _mensaje[]){
+	mensaje=_mensaje;
+	_max=strlen(_mensaje);
+	iMsj=0;
+	IE2|=UCA0TXIE;
+	UCA0TXBUF=mensaje[0];
 
 }
-void uart_prints(char _mensaje[], int _m){
+void uart_prints2(char _mensaje[], int _m){
 	mensaje=_mensaje;
 	_max=_m;
 	iMsj=0;
 	IE2|=UCA0TXIE;
-	UCA0TXBUF=mensaje[iMsj++];
-	uart_printc('\r');
-	uart_printc('\n');
+	UCA0TXBUF=mensaje[0];
 
 }
 void uart_printl(char _mensaje[], int _m){
-	mensaje=_mensaje;
-	_max=_m;
-	iMsj=0;
-	IE2|=UCA0TXIE;
-	UCA0TXBUF=mensaje[iMsj++];
+	uart_prints2(_mensaje,_m);
 	uart_printc('\r');
 	uart_printc('\n');
-
 }
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void recep_isr(void){
