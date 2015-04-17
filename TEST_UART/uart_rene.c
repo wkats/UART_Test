@@ -33,20 +33,13 @@ char uart_getc(void){
 void uart_printc(char _c){
 	mensaje=(char *) (malloc(sizeof(char)));
 	mensaje[0]=_c;
-	_max=1;
-	IE2|=UCA0TXIE;
-	mensaje=NULL;
+	_max=0;
+	iMsj=0;
+	UCA0TXBUF=mensaje[0];
+	IE2|=UCA0TXIE;	;
 	free(mensaje);
 }
-void uart_prints(char _mensaje[]){
-	mensaje=_mensaje;
-	_max=strlen(_mensaje);
-	iMsj=0;
-	IE2|=UCA0TXIE;
-	UCA0TXBUF=mensaje[0];
-
-}
-void uart_prints2(char _mensaje[], int _m){
+void uart_prints(char _mensaje[], int _m){
 	mensaje=_mensaje;
 	_max=_m;
 	iMsj=0;
@@ -55,9 +48,9 @@ void uart_prints2(char _mensaje[], int _m){
 
 }
 void uart_printl(char _mensaje[], int _m){
-	uart_prints2(_mensaje,_m);
-	uart_printc('\r');
-	uart_printc('\n');
+	uart_prints(_mensaje,_m);
+	//uart_printc('\r');
+	//uart_printc('\n');
 }
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void recep_isr(void){
@@ -68,9 +61,11 @@ __interrupt void recep_isr(void){
 
 #pragma vector=USCIAB0TX_VECTOR
 __interrupt void transm_isr(void){
-	UCA0TXBUF=mensaje[iMsj++];
-		if(iMsj==_max){
+		if(iMsj>=_max){
 			iMsj=0;
 			IE2&=~UCA0TXIE;
+		}
+		else{
+			UCA0TXBUF=mensaje[iMsj++];
 		}
 }

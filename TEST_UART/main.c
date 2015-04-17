@@ -5,14 +5,15 @@ void imprimirMenu(void);
 int main(void) {
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
 	uart_init();
-	char recibido[12]="Recibido: \r\n";
-	uart_prints2(recibido,12);
+	char recibido[12]="Recibido: ";
 	while(1){
-		//uart_printc(uart_getc());
-		recibido[9]= uart_getc();
-		uart_prints(recibido);
-		//uart_prints("Hola mundo\n\r",12);
-		//uart_printc("A");
+		uart_printc(uart_getc());
+		//recibido[9]= uart_getc();
+		//uart_printl(recibido,sizeof(recibido));
+		//uart_prints(recibido,sizeof(recibido));
+		//uart_prints(recibido,sizeof(recibido));
+//		uart_printc('\n');
+//		uart_printc('\r');
 	}
 }
 void imprimirMenu(void){
